@@ -4,31 +4,34 @@ const app = express()
 const port = 9000
 app.use(express.json());
 
-app.post('/alert', (req, expressRes) => {
+app.post('/alert', (req, res) => {
+    let totalBody = ""
     for (let alert of req.body.alerts) {
         console.log(alert)
         let destURL:string = ""
+        let status = alert.status // firing or resolved
         try {
-            destURL = alert.annotations.post
+            destURL = alert.annotations[status]
         } catch(e) {
             continue;
         }
-        console.log(destURL)
         
         const options = {
             url: destURL,
+            method: alert.annotations.method
         };
+        console.log(options)
 
-        request.post(options, (err, res, body) => {
+        request(options, (err, res, body) => {
             if (err) {
                 return console.log(err);
             }
             console.log(`Status: ${res.statusCode}`);
             console.log(body);
-            expressRes.status(res.statusCode)
-            expressRes.send(body)
+            totalBody += body
         });
     }
+    res.send(totalBody)
 })
 
 app.listen(port, () => {
