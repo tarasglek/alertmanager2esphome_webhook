@@ -1,5 +1,5 @@
 # docker build -t alertmanager2esphome_webhook .
-# docker run -ti -v  alertmanager2esphome_webhook
+# docker run -ti -p 9000:9000  alertmanager2esphome_webhook
 FROM node:10-stretch
 COPY package.json .
 RUN yarn install
